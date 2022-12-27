@@ -11,6 +11,11 @@ private:
 
 public:
     var(const double& v) : value_(v){};
+    void set_left(std::shared_ptr<var> v) { left_ = v; }
+    void set_right(std::shared_ptr<var> v) { right_ = v; }
+
+    std::shared_ptr<var> get_left() { return left_ ; }
+    std::shared_ptr<var> get_right() { return right_ ; }
 
     double value() const { return value_; }
 
@@ -38,9 +43,9 @@ namespace function {
 struct exp {
     exp() {}
     var operator()(const var e) {
-        var r(std::exp(e.value()));
-
-        return r;
+        var result(std::exp(e.value()));
+        result.set_left(std::make_shared<var>(e.value()));
+        return result;
     }
 };
 }  // namespace function
@@ -52,6 +57,9 @@ int main() {
 
     auto c = exp_(a + b);
 
-    std::cout << c << std::endl;
+    auto x = c.get_left();
 
+    std::cout << *x << std::endl;
+    
+    std::cout << c << std::endl;
 }
