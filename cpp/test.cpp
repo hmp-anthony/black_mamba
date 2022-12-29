@@ -40,16 +40,16 @@ public:
 
     friend var operator+(const var& l, const var& r) {
         var result(l.value_ + r.value_);
-        result.left_ = std::make_shared<var>(l.value_);
-        result.right_ = std::make_shared<var>(r.value_);
+        result.left_ = std::make_shared<var>(l);
+        result.right_ = std::make_shared<var>(r);
         result.op_ = "+";
         return result;
     }
 
     friend var operator*(const var& l, const var& r) {
         var result(l.value_ * r.value_);
-        result.left_ = std::make_shared<var>(l.value_);
-        result.right_ = std::make_shared<var>(r.value_);
+        result.left_ = std::make_shared<var>(l);
+        result.right_ = std::make_shared<var>(r);
         result.op_ = "*";
         return result;
     }
@@ -71,12 +71,39 @@ struct exp {
 };
 }  // namespace function
 
+#define COUNT 10
+
+void print(std::shared_ptr<var> root, int space) {
+    // Base case
+    if (root == NULL) return;
+
+    // Increase distance between levels
+    space += COUNT;
+
+    // Process right child first
+    auto r = root->get_right();
+    print(r, space);
+
+    // Print current node after space
+    // count
+    std::cout << std::endl;
+    for (int i = COUNT; i < space; i++) std::cout << " ";
+    std::cout << root->value() << "\n";
+
+    // Process left child
+    auto l = root->get_left();
+    print(l, space);
+}
+
 int main() {
     // tests are in reverse order of complexity
     {
         var x(10);
         var y(20);
         var z(4.5);
+
+        auto w1 = x + y;
+        auto w2 = w1 + z;
 
         auto w = (x + y) * z + (z + x) * y;
 
@@ -86,12 +113,12 @@ int main() {
         std::cout << *pl << o << *pr << std::endl;
 
         auto pl_1 = pl->get_left();
-        auto pr_1=  pl->get_right();
+        auto pr_1 = pl->get_right();
         auto o_1 = pl->operation();
         std::cout << *pl_1 << o_1 << *pr_1 << std::endl;
 
         auto pl_2 = pr->get_left();
-        auto pr_2=  pr->get_right();
+        auto pr_2 = pr->get_right();
         auto o_2 = pr->operation();
         std::cout << *pl_2 << o_2 << *pr_2 << std::endl;
     }
