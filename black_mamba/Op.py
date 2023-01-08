@@ -144,6 +144,41 @@ class exp:
 		self.parent_exponent.__back__(upstream_grad * math.exp(self.exponent.val))
 
 
+class sin:
+	def __init__(self):
+		self.argument = None
+		self.parent_argument = None
+
+	def __call__(self, argument):
+		self.argument = argument if type(argument) is Var else Var(argument)
+		x = Var(math.sin(self.argument.val))
+
+		self.parent_argument = self.argument
+		self.child = x
+		x.parent = self
+		return x
+
+	def __back__(self, upstream_grad):
+		self.parent_argument.__back__(upstream_grad * math.cos(self.argument.val))
+
+
+class cos:
+	def __init__(self):
+		self.argument = None
+		self.parent_argument = None
+
+	def __call__(self, argument):
+		self.argument = argument if type(argument) is Var else Var(argument)
+		x = Var(math.cos(self.argument.val))
+
+		self.parent_argument = self.argument
+		self.child = x
+		x.parent = self
+		return x
+
+	def __back__(self, upstream_grad):
+		self.parent_argument.__back__(upstream_grad * (-1) * math.sin(self.argument.val))
+
 class neg:
 	def __init__(self):
 		self.var = None
