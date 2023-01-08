@@ -179,6 +179,42 @@ class cos:
 	def __back__(self, upstream_grad):
 		self.parent_argument.__back__(upstream_grad * (-1) * math.sin(self.argument.val))
 
+class ln:                                                                                             
+    def __init__(self):                                                                                
+        self.argument = None                                                                           
+        self.parent_argument = None                                                                    
+                                                                                                       
+    def __call__(self, argument):                                                                      
+        self.argument = argument if type(argument) is Var else Var(argument)                           
+        x = Var(math.log(self.argument.val))                                                           
+                                                                                                       
+        self.parent_argument = self.argument                                                           
+        self.child = x                                                                                 
+        x.parent = self                                                                                
+        return x                                                                                       
+                                                                                                       
+    def __back__(self, upstream_grad):                                                                 
+        self.parent_argument.__back__(upstream_grad *  (1 / self.argument.val))       
+
+
+class log:                                                                                              
+    def __init__(self, base):                                                                                
+        self.argument = None                                                                           
+        self.parent_argument = None
+        self.base = base
+                                                                                                       
+    def __call__(self, argument):                                                                      
+        self.argument = argument if type(argument) is Var else Var(argument)                           
+        x = Var(math.log(self.argument.val, self.base))                                                           
+        self.parent_argument = self.argument                                                           
+        self.child = x                                                                                 
+        x.parent = self                                                                                
+        return x                                                                                       
+                                                                                                       
+    def __back__(self, upstream_grad):                                                                 
+        self.parent_argument.__back__(upstream_grad *  (1 / (self.argument.val * math.log(self.base) )))  
+
+
 class neg:
 	def __init__(self):
 		self.var = None
